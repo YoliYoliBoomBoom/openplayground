@@ -1,0 +1,28 @@
+version: "3"
+services:
+  openplayground:
+    build: .
+    #image: "ghcr.io/mat-o-lab/csvtocsvw:latest"
+    container_name: "openplayground"
+    #environment:
+    #  APP_MODE: "production"
+    #  ADMIN_MAIL: ${ADMIN_MAIL}
+    ports:
+      - 5432:5432
+    restart: always
+    networks:
+      - openplayground_net
+    volumes:
+      #- ./server:/web/server
+      - ./data:/web/config
+    entrypoint: ["openplayground", "run", "--host", "0.0.0.0", "--env", "/web/config/.env", "--debug"]
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:5000/info"]
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 20
+
+networks:
+  openplayground_net:
+    name: openplayground_net
+    driver: bridge

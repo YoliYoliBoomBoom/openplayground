@@ -4,12 +4,13 @@ from .event_emitter import EventEmitter, EVENTS
 
 class Model:
     def __init__(
-        self, name: str, enabled: bool, capabilities: List[str],  provider: str, status: str, parameters: dict = None
+        self, name: str, enabled: bool, capabilities: List[str],  provider: str, status: str, parameters: dict = None, engine: str=None
     ):
         self.name = name
         self.capabilities = capabilities
         self.enabled = enabled
         self.provider = provider
+        self.engine = engine
         self.status = status
         self.parameters = parameters
 
@@ -19,12 +20,13 @@ class Model:
             capabilities=self.capabilities,
             enabled=self.enabled,
             provider=self.provider,
+            engine=self.engine,
             status=self.status,
             parameters=self.parameters.copy()
         )
 
     def __repr__(self):
-        return f'Model({self.name}, {self.capabilities}, {self.enabled}, {self.provider}, {self.status}, {self.parameters})'
+        return f'Model({self.name}, {self.capabilities}, {self.enabled}, {self.provider}, {self.engine}, {self.status}, {self.parameters})'
 
 class ModelEncoder(json.JSONEncoder):
     def __init__(self, *args, serialize_as_list=True, **kwargs):
@@ -34,7 +36,7 @@ class ModelEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Model):
             properties = {
-                "capabilities": obj.capabilities,
+                "capabilities": obj.capabilities, "engine": obj.engine,
                 "enabled": obj.enabled, "status": obj.status, "parameters": obj.parameters
             }
             if self.serialize_as_list:
@@ -111,7 +113,7 @@ class ProviderEncoder(json.JSONEncoder):
         if isinstance(obj, Provider):
             models = [{
                 "name": model.name, "capabilities": model.capabilities,
-                "enabled": model.enabled, "provider": model.provider,
+                "enabled": model.enabled, "provider": model.provider, "engine": model.engine,
                 "status": model.status, "parameters": model.parameters
             } for model in obj.models]
             

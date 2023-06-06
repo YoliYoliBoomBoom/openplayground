@@ -30,7 +30,7 @@ const modelProviders = {
   anthropic: "Anthropic",
   cohere: "co:here",
   openai: "OpenAI",
-  fhg-sit: "FhG-SIT"
+  azureoai: "Azure-OpenAI"
 }
 
 const ParametersSidePanel = ({ showModelDropdown, showModelList }) => {

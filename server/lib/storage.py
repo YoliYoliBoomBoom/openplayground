@@ -39,6 +39,7 @@ class Storage:
                 Model(
                     name=model_name,
                     provider=provider_name,
+                    engine=model.get("engine", None),
                     capabilities=model.get("capabilities", []),
                     enabled=model.get("enabled", False),
                     status=model.get("status", "ready"),
@@ -217,6 +218,7 @@ class Storage:
                 'models': {
                     model.name: {
                         'capabilities': model.capabilities,
+                        'engine': model.engine,
                         'enabled': model.enabled,
                         'status': model.status,
                         'parameters': model.parameters,

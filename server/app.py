@@ -299,8 +299,8 @@ class GlobalStateManager:
 
         if inference_request.model_provider == "openai":
             return self.inference_manager.openai_text_generation(provider_details, inference_request)
-        elif inference_request.model_provider == "fhg-sit":
-            return self.inference_manager.fhgsit_text_generation(provider_details, inference_request)
+        elif inference_request.model_provider == "azureoai":
+            return self.inference_manager.azureoai_text_generation(provider_details, inference_request)
         elif inference_request.model_provider == "cohere":
             return self.inference_manager.cohere_text_generation(provider_details, inference_request)
         elif inference_request.model_provider == "huggingface":
@@ -327,7 +327,7 @@ def cli():
 
 @click.command()
 @click.help_option('-h', '--help')
-@click.option('--host',  '-H', default='localhost', help='The host to bind to. Default: localhost.')
+@click.option('--host',  '-H', default='0.0.0.0', help='The host to bind to. Default: localhost.')
 @click.option('--port', '-p', default=5432, help='The port to bind to. Default: 5432.')
 @click.option('--debug/--no-debug', default=False, help='Enable or disable Flask debug mode. Default: False.')
 @click.option('--env', '-e', default=".env", help='Path to the environment file for storing and reading API keys. Default: .env.')

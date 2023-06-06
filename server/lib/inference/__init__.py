@@ -35,6 +35,7 @@ class InferenceRequest:
     Args:
         uuid (str): unique identifier for inference request
         model_name (str): name of model to use
+        engine (str): deployment id
         model_tag (str): tag of model to use
         model_provider (str): provider of model to use
         model_parameters (dict): parameters for model
@@ -42,6 +43,7 @@ class InferenceRequest:
     '''
     uuid: str
     model_name: str
+    engine: str
     model_tag: str
     model_provider: str
     model_parameters: dict
@@ -155,7 +157,9 @@ class InferenceManager:
             top_n_distribution=None
         ), event="status"):
             return
-
+       
+        #print(provider_details)
+        print(inference_request)
         try:
             inference_fn(provider_details, inference_request)
         except openai.error.Timeout as e:
@@ -331,19 +335,23 @@ class InferenceManager:
         else:
             self.__error_handler__(self.__openai_text_generation__, provider_details, inference_request)
 
-    def __fhgsit_chat_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
+    def __azureoai_chat_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
         openai.api_key = provider_details.api_key
-
+        openai.api_type = "azure"
+        openai.api_base = "https://iwm-sit.openai.azure.com/"
+        openai.api_version = "2023-03-15-preview"
         current_date = datetime.now().strftime("%Y-%m-%d")
 
         if inference_request.model_name == "gpt-4":
             system_content = "You are GPT-4, a large language model trained by OpenAI. Answer as concisely as possible"
         else:
             system_content = f"You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Knowledge cutoff: 2021-09-01 Current date: {current_date}"
-
+        
+        print(inference_request.model_name, inference_request.engine)
         response = openai.ChatCompletion.create(
-             model=inference_request.model_name,
-             messages = [
+            engine=inference_request.engine,
+            model=inference_request.model_name,
+            messages = [
                 {"role": "system", "content": system_content},
                 {"role": "user", "content": inference_request.prompt},
             ],
@@ -353,7 +361,8 @@ class InferenceManager:
             frequency_penalty=inference_request.model_parameters['frequencyPenalty'],
             presence_penalty=inference_request.model_parameters['presencePenalty'],
             stream=True,
-            timeout=60
+            timeout=60,
+            stop=None
         )
 
         tokens = ""
@@ -388,10 +397,14 @@ class InferenceManager:
                 cancelled = True
                 logger.info(f"Cancelled inference for {inference_request.uuid} - {inference_request.model_name}")
 
-    def __fhgsit_text_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
+    def __azureoai_text_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
         openai.api_key = provider_details.api_key
-
+        openai.api_type = "azure"
+        openai.api_base = "https://iwm-sit.openai.azure.com/"
+        openai.api_version = "2023-03-15-preview"
+        
         response = openai.Completion.create(
+            engine=inference_request.engine,
             model=inference_request.model_name,
             prompt=inference_request.prompt,
             temperature=inference_request.model_parameters['temperature'],
@@ -457,12 +470,12 @@ class InferenceManager:
                 cancelled = True
                 logger.info(f"Cancelled inference for {inference_request.uuid} - {inference_request.model_name}")
 
-    def fhgsit_text_generation(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
+    def azureoai_text_generation(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
         # TODO: Add a meta field to the inference so we know when a model is chat vs text
         if inference_request.model_name in ["gpt-3.5-turbo", "gpt-4"]:
-            self.__error_handler__(self.__fhgsit_chat_generation__, provider_details, inference_request)
+            self.__error_handler__(self.__azureoai_chat_generation__, provider_details, inference_request)
         else:
-            self.__error_handler__(self.__fhgsit_text_generation__, provider_details, inference_request)
+            self.__error_handler__(self.__azureoai_text_generation__, provider_details, inference_request)
 
     def __cohere_text_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
         with requests.post("https://api.cohere.ai/generate",
