@@ -40,6 +40,7 @@ class Storage:
                     name=model_name,
                     provider=provider_name,
                     engine=model.get("engine", None),
+                    api_version=model.get("api_version", None),
                     capabilities=model.get("capabilities", []),
                     enabled=model.get("enabled", False),
                     status=model.get("status", "ready"),
@@ -55,6 +56,7 @@ class Storage:
                     default_capabilities=provider.get('defaultCapabilities', []),
                     default_parameters=provider.get('defaultParameters', None),
                     api_key=os.environ.get(f'{provider_name.upper()}_API_KEY'),
+                    api_base=provider.get('api_base', None),
                     requires_api_key=provider.get("requiresAPIKey", False),
                     search_url=provider.get('searchURL', None),
                 )
@@ -168,7 +170,6 @@ class Storage:
             ),
             None,
         )
-    
     def update_provider_api_key(self, provider_name: str, api_key: str):
         provider = self.get_provider(provider_name)
         if provider is None:
@@ -219,6 +220,7 @@ class Storage:
                     model.name: {
                         'capabilities': model.capabilities,
                         'engine': model.engine,
+                        'api_version': model.api_version,
                         'enabled': model.enabled,
                         'status': model.status,
                         'parameters': model.parameters,

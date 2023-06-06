@@ -2,7 +2,158 @@
   "azureoai": {
     "requiresAPIKey": true,
     "remoteInference": true,
+    "api_base": "https://iwm-sit.openai.azure.com/",
     "models": {
+      "text-davinci-003": {
+        "enabled": false,
+        "status": "ready",
+        "capabilities": [
+          "logprobs"
+        ],
+        "api_version": "2023-03-15-preview",
+        "engine": "TEXTDAVINCI3",
+        "parameters": {
+          "temperature": {
+            "value": 0.5,
+            "range": [
+              0.1,
+              1
+            ]
+          },
+          "maximumLength": {
+            "value": 200,
+            "range": [
+              50,
+              4000
+            ]
+          },
+          "topP": {
+            "value": 1,
+            "range": [
+              0.1,
+              1
+            ]
+          },
+          "presencePenalty": {
+            "value": 0,
+            "range": [
+              0,
+              1
+            ]
+          },
+          "frequencyPenalty": {
+            "value": 0,
+            "range": [
+              0,
+              1
+            ]
+          },
+          "stopSequences": {
+            "value": [],
+            "range": []
+          }
+        }
+      },
+      "text-ada-001": {
+        "enabled": false,
+        "status": "ready",
+        "capabilities": [
+          "logprobs"
+        ],
+        "engine": "TEXTADA",
+        "api_version": "2023-03-15-preview",
+        "parameters": {
+          "temperature": {
+            "value": 0.2,
+            "range": [
+              0.1,
+              1
+            ]
+          },
+          "maximumLength": {
+            "value": 300,
+            "range": [
+              50,
+              2048
+            ]
+          },
+          "topP": {
+            "value": 0.9,
+            "range": [
+              0.1,
+              1
+            ]
+          },
+          "presencePenalty": {
+            "value": 0,
+            "range": [
+              0,
+              1
+            ]
+          },
+          "frequencyPenalty": {
+            "value": 0,
+            "range": [
+              0,
+              1
+            ]
+          },
+          "stopSequences": {
+            "value": [],
+            "range": []
+          }
+        }
+      },
+      "code-davinci-002": {
+        "enabled": false,
+        "status": "ready",
+        "capabilities": [
+          "logprobs"
+        ],
+        "engine": "CODEDAVINCI",
+        "api_version": "2023-03-15-preview",
+        "parameters": {
+          "temperature": {
+            "value": 0.2,
+            "range": [
+              0.1,
+              1
+            ]
+          },
+          "maximumLength": {
+            "value": 200,
+            "range": [
+              50,
+              4000
+            ]
+          },
+          "topP": {
+            "value": 1,
+            "range": [
+              0.1,
+              1
+            ]
+          },
+          "presencePenalty": {
+            "value": 0,
+            "range": [
+              0,
+              1
+            ]
+          },
+          "frequencyPenalty": {
+            "value": 0,
+            "range": [
+              0,
+              1
+            ]
+          },
+          "stopSequences": {
+            "value": [],
+            "range": []
+          }
+        }
+      },
       "gpt-3.5-turbo": {
         "enabled": false,
         "status": "ready",
@@ -10,6 +161,7 @@
           "logprobs"
         ],
         "engine": "GPT35",
+        "api_version": "2023-03-15-preview",
         "parameters": {
           "temperature": {
             "value": 0.5,
@@ -57,6 +209,7 @@
   "openai": {
     "requiresAPIKey": true,
     "remoteInference": true,
+    "api_base": "https://api.openai.com/",
     "models": {
       "text-ada-001": {
         "enabled": false,

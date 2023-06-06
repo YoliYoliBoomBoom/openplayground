@@ -76,7 +76,7 @@ def providers():
     storage = g.get('storage')
   
     return current_app.response_class(
-        response=json.dumps(storage.get_providers_names()),
+        response=json.dumps(storage.get_provider_names()),
         status=200,
         mimetype='application/json'
     )
@@ -90,8 +90,8 @@ def providers_with_models():
     storage = g.get('storage')
 
     providers_list = storage.get_providers()
+    #delete the api_keys before serializing output
     providers_dict = {provider.name: provider for provider in providers_list}
-
     return current_app.response_class(
         response=json.dumps(
             providers_dict, cls=ProviderEncoder, indent=4, serialize_models_as_list=True

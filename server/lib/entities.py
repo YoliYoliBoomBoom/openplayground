@@ -4,13 +4,14 @@ from .event_emitter import EventEmitter, EVENTS
 
 class Model:
     def __init__(
-        self, name: str, enabled: bool, capabilities: List[str],  provider: str, status: str, parameters: dict = None, engine: str=None
+        self, name: str, enabled: bool, capabilities: List[str],  provider: str, status: str, parameters: dict = None, engine: str=None, api_version: str=None,
     ):
         self.name = name
         self.capabilities = capabilities
         self.enabled = enabled
         self.provider = provider
         self.engine = engine
+        self.api_version = api_version
         self.status = status
         self.parameters = parameters
 
@@ -21,6 +22,7 @@ class Model:
             enabled=self.enabled,
             provider=self.provider,
             engine=self.engine,
+            api_version= self.api_version,
             status=self.status,
             parameters=self.parameters.copy()
         )
@@ -36,7 +38,7 @@ class ModelEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Model):
             properties = {
-                "capabilities": obj.capabilities, "engine": obj.engine,
+                "capabilities": obj.capabilities, "engine": obj.engine, "api_version": obj.api_version,
                 "enabled": obj.enabled, "status": obj.status, "parameters": obj.parameters
             }
             if self.serialize_as_list:
@@ -50,6 +52,7 @@ class Provider:
         self, name: str, models: List[Model], remote_inference: bool = False,
         default_capabilities: List[str] = None, default_parameters: dict = None,
         api_key: str = None, requires_api_key: bool = False,
+        api_base: str = None,
         search_url: str = None
     ):
         self.event_emitter = EventEmitter()
@@ -59,6 +62,7 @@ class Provider:
         self.default_capabilities = default_capabilities
         self.default_parameters = default_parameters
         self.api_key = api_key
+        self.api_base = api_base
         self.requires_api_key = requires_api_key
         self.search_url = search_url
     
@@ -97,6 +101,7 @@ class Provider:
             default_capabilities=self.default_capabilities.copy() if self.default_capabilities else None,
             default_parameters=self.default_parameters.copy() if self.default_parameters else None,
             api_key=self.api_key,
+            api_base=self.api_base,
             requires_api_key=self.requires_api_key,
             search_url=self.search_url
         )
@@ -114,13 +119,14 @@ class ProviderEncoder(json.JSONEncoder):
             models = [{
                 "name": model.name, "capabilities": model.capabilities,
                 "enabled": model.enabled, "provider": model.provider, "engine": model.engine,
+                "api_version": model.api_version,
                 "status": model.status, "parameters": model.parameters
             } for model in obj.models]
             
             if not self.serialize_models_as_list:
                 models = dict(zip([model["name"] for model in models], models))
         
-            return {self.to_camel_case(k): v for k, v in obj.__dict__.items() if k not in {'models', 'event_emitter'}} | {'models': models}
+            return {self.to_camel_case(k): v for k, v in obj.__dict__.items() if k not in {'models', 'event_emitter', 'api_key'}} | {'models': models}
         return super().default(obj)
     
     @staticmethod

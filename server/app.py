@@ -292,7 +292,8 @@ class GlobalStateManager:
         provider = self.storage.get_provider(inference_request.model_provider)
 
         provider_details = ProviderDetails(
-            api_key=provider.api_key ,
+            api_key=provider.api_key,
+            api_base=provider.api_base,
             version_key=None
         )
         logger.info(f"Received inference request {inference_request.model_provider}")

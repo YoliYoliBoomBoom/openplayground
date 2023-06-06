@@ -27,6 +27,7 @@ class ProviderDetails:
         version_key (str): version key for provider
     '''
     api_key: str
+    api_base: str
     version_key: str
 
 @dataclass
@@ -36,6 +37,7 @@ class InferenceRequest:
         uuid (str): unique identifier for inference request
         model_name (str): name of model to use
         engine (str): deployment id
+        api_version (str): version of api to use
         model_tag (str): tag of model to use
         model_provider (str): provider of model to use
         model_parameters (dict): parameters for model
@@ -44,6 +46,7 @@ class InferenceRequest:
     uuid: str
     model_name: str
     engine: str
+    api_version: str
     model_tag: str
     model_provider: str
     model_parameters: dict
@@ -338,8 +341,10 @@ class InferenceManager:
     def __azureoai_chat_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
         openai.api_key = provider_details.api_key
         openai.api_type = "azure"
-        openai.api_base = "https://iwm-sit.openai.azure.com/"
-        openai.api_version = "2023-03-15-preview"
+        print(provider_details)
+        openai.api_base = provider_details.api_base
+        if inference_request.api_version:
+            openai.api_version = inference_request.api_version
         current_date = datetime.now().strftime("%Y-%m-%d")
 
         if inference_request.model_name == "gpt-4":
@@ -347,7 +352,7 @@ class InferenceManager:
         else:
             system_content = f"You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Knowledge cutoff: 2021-09-01 Current date: {current_date}"
         
-        print(inference_request.model_name, inference_request.engine)
+        #print(inference_request.model_name, inference_request.engine)
         response = openai.ChatCompletion.create(
             engine=inference_request.engine,
             model=inference_request.model_name,
@@ -400,9 +405,9 @@ class InferenceManager:
     def __azureoai_text_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
         openai.api_key = provider_details.api_key
         openai.api_type = "azure"
-        openai.api_base = "https://iwm-sit.openai.azure.com/"
-        openai.api_version = "2023-03-15-preview"
-        
+        openai.api_base = provider_details.api_base
+        if inference_request.api_version:
+            openai.api_version = inference_request.api_version
         response = openai.Completion.create(
             engine=inference_request.engine,
             model=inference_request.model_name,

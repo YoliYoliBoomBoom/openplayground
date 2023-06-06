@@ -422,6 +422,7 @@ const PlaygroundContextWrapper = ({page, children}) => {
           tag: model_key,
           capabilities: modelDetails.capabilities,
           engine: modelDetails.engine,
+          api_version: modelDetails.api_version,
           provider: modelDetails.provider,
           parameters: Object.entries(modelDetails.parameters).reduce((acc, [key, fields]) => {
             acc[key] = fields.value;
@@ -436,6 +437,7 @@ const PlaygroundContextWrapper = ({page, children}) => {
           existingModelEntry.provider = modelDetails.provider,
           existingModelEntry.tag = model_key;
           existingModelEntry.engine = modelDetails.engine
+          existingModelEntry.api_version = modelDetails.api_version,
           existingModelEntry.parameters = Object.entries(modelDetails.parameters).reduce((acc, [key, fields]) => {
             acc[key] = fields.value;
             return acc;
@@ -447,6 +449,7 @@ const PlaygroundContextWrapper = ({page, children}) => {
         name: model_key,
         capabilities: modelDetails.capabilities,
         engine: modelDetails.engine,
+        api_version: modelDetails.api_version,
         defaultParameters: modelDetails.parameters,
         provider: modelDetails.provider,
       }

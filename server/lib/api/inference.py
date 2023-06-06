@@ -49,22 +49,21 @@ def is_valid_request_data(data):
     return isinstance(data['prompt'], str) and isinstance(data['models'], list)
 
 def create_inference_request(model, storage, prompt, request_uuid):
-    model_name, provider_name, engine, model_tag, parameters = extract_model_data(model)
+    model_name, provider_name, engine, api_version, model_tag, parameters = extract_model_data(model)
     model_name = model_name.removeprefix(f"{provider_name}:")
     provider = next((provider for provider in storage.get_providers() if provider.name == provider_name), None)
     if provider is None or not provider.has_model(model_name):
         return None
     
     if validate_parameters(provider.get_model(model_name), parameters):
-        return InferenceRequest(uuid=request_uuid, model_name=model_name, engine=engine, model_tag=model_tag,
+        return InferenceRequest(uuid=request_uuid, model_name=model_name, engine=engine, api_version=api_version, model_tag=model_tag,
             model_provider=provider_name, model_parameters=parameters, prompt=prompt
         )
 
     return None
 
 def extract_model_data(model):
-    print(model)
-    return model['name'],  model['provider'], model.get('engine',None), model['tag'], model['parameters']
+    return model['name'],  model['provider'], model.get('engine',None), model.get('api_version',None), model['tag'], model['parameters']
 
 def validate_parameters(model, parameters):
     default_parameters = model.parameters
