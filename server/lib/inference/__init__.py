@@ -161,8 +161,6 @@ class InferenceManager:
         ), event="status"):
             return
        
-        #print(provider_details)
-        print(inference_request)
         try:
             inference_fn(provider_details, inference_request)
         except openai.error.Timeout as e:
@@ -341,7 +339,6 @@ class InferenceManager:
     def __azureoai_chat_generation__(self, provider_details: ProviderDetails, inference_request: InferenceRequest):
         openai.api_key = provider_details.api_key
         openai.api_type = "azure"
-        print(provider_details)
         openai.api_base = provider_details.api_base
         if inference_request.api_version:
             openai.api_version = inference_request.api_version
