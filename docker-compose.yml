@@ -10,8 +10,9 @@ services:
       - openplayground_net
     volumes:
       - ./data:/web/config
+      - ./server/models.json:/web/server/models.json  # Mount models.json as a volume
     #entrypoint: ["openplayground", "run", "--host", "0.0.0.0", "--env", "/web/config/.env", "--debug"]
-    entrypoint: ["openplayground", "run", "--host", "0.0.0.0", "--env", "/web/config/.env"]
+    entrypoint: ["openplayground", "run", "--host", "0.0.0.0", "--env", "/web/config/.env", "--models", "/web/server/models.json"]
     #entrypoint: ["gunicorn", "--bind", "0.0.0.0:5000", "server:app","--workers", "5"]
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:5432/info"]
